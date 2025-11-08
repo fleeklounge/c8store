@@ -1,0 +1,63 @@
+name: Question
+description: Ask a question about C8Store
+title: "[QUESTION] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your question!
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+      placeholder: Ask your question...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide any relevant context that might help answer your question
+      placeholder: Provide context...
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What I've Tried
+      description: What have you already tried or researched?
+      placeholder: Describe what you've tried...
+    validations:
+      required: false
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System (if relevant)
+      description: e.g., macOS, Linux, Windows
+      placeholder: OS
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: C8Store Version (if relevant)
+      description: e.g., 1.0.0
+      placeholder: Version
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other information that might be helpful
+      placeholder: Any additional information...
+    validations:
+      required: false

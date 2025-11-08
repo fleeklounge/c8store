@@ -1,0 +1,65 @@
+name: Documentation Request
+description: Request new or improved documentation for C8Store
+title: "[DOCS] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation!
+
+  - type: textarea
+    id: topic
+    attributes:
+      label: Documentation Topic
+      description: What topic needs documentation?
+      placeholder: Describe the topic...
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Situation
+      description: What documentation currently exists (if any)?
+      placeholder: Describe current documentation...
+    validations:
+      required: false
+
+  - type: textarea
+    id: missing
+    attributes:
+      label: What's Missing
+      description: What information is missing or unclear?
+      placeholder: Describe what's missing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed Content
+      description: If you have ideas about what the documentation should include, describe them here
+      placeholder: Describe proposed content...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who is this documentation for?
+      options:
+        - label: New users
+        - label: Advanced users
+        - label: Contributors/Developers
+        - label: All users
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, examples, or references here
+      placeholder: Any additional information...
+    validations:
+      required: false

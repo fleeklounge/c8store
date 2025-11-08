@@ -1,16 +1,45 @@
-# c8store
+# C8Store (씨팔스토어)
 
-A new Flutter project.
+A convenient and user-friendly Firestore management tool built with Flutter.
+
+## Overview
+
+C8Store is an open-source project designed to make working with Firestore easier and more intuitive. It provides:
+
+- **Easy Installation**: Simple setup process
+- **User-Friendly UI**: Intuitive interface for managing Firestore data
+- **Multi-Store Support**: Manage multiple Firestore instances
+- **Multi-Firebase Support**: Connect to multiple Firebase projects
+- **Table View**: Data displayed in clear, organized tables
+
+## Supported Platforms
+
+- macOS
+- Linux
+- Windows
+
+(Platform support may change in future versions)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Documentation is available in the [./docs](./docs) directory.
 
-A few resources to get you started if this is your first Flutter project:
+For detailed information, see [./docs/README.md](./docs/README.md).
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## License
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+We welcome contributions! Please check our [issue templates](.github/ISSUE_TEMPLATE) for:
+- Feature requests
+- Bug reports
+- Documentation requests
+- Questions
+
+## Development
+
+This project uses Flutter. For Flutter development resources:
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Flutter Cookbook](https://docs.flutter.dev/cookbook)

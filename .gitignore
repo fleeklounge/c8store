@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# AI
+.claude/
+.taskmaster/
+CLAUDE.md
+AGENT.md
+AGENTS.md
+.mcp.json
