@@ -35,6 +35,21 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Google OAuth2 authentication for Firebase Admin API access
+  googleapis_auth: ^1.6.0
+
+  # Secure storage for OAuth credentials and sensitive data
+  flutter_secure_storage: ^9.2.2
+
+  # HTTP client for REST API calls to Firebase Admin API
+  http: ^1.2.2
+
+  # State management for application-wide state
+  provider: ^6.1.2
+
+  # URL launcher for opening OAuth URLs in browser
+  url_launcher: ^6.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

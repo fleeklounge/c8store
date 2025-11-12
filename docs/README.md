@@ -16,31 +16,30 @@ C8Store (씨팔스토어) is a convenient tool for managing Firestore databases.
 
 ## Installation
 
-### Prerequisites
+For detailed setup instructions, see the [Setup Guide](./setup.md).
 
-- Flutter SDK (version ^3.9.2)
-- A Firebase project with Firestore enabled
-- One of the supported platforms:
-  - macOS
-  - Linux
-  - Windows
+### Quick Start
 
-### Setup
-
-1. Clone the repository:
+1. Clone the repository and install dependencies:
 
    ```bash
    git clone https://github.com/your-org/c8store.git
    cd c8store
-   ```
-
-2. Install dependencies:
-
-   ```bash
    flutter pub get
    ```
 
-3. Run the application:
+2. Create Google OAuth credentials (see [Setup Guide](./setup.md))
+
+3. Create `oauth_config.json` in project root:
+
+   ```json
+   {
+     "clientId": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+     "clientSecret": "YOUR_CLIENT_SECRET"
+   }
+   ```
+
+4. Run the application:
 
    ```bash
    flutter run -d macos  # for macOS
@@ -59,11 +58,35 @@ C8Store (씨팔스토어) is a convenient tool for managing Firestore databases.
 
 ### Configuration
 
-(Documentation to be added)
+#### OAuth Setup
+
+C8Store uses Google OAuth 2.0 for authentication. You need to:
+
+1. Create OAuth credentials in Google Cloud Console
+2. Configure the credentials in `oauth_config.json`
+
+See the [Setup Guide](./setup.md) for detailed instructions.
+
+#### Connecting to Firebase Projects
+
+After signing in with Google:
+
+1. The app will automatically list all Firebase projects you have access to
+2. Select a project from the list
+3. Browse collections and documents in that project
 
 ### Usage
 
-(Documentation to be added)
+#### Managing Collections
+
+- View all collections in the selected Firebase project
+- Browse documents within each collection
+- (More features coming soon)
+
+#### Settings
+
+- Switch between Firebase projects
+- Logout and clear credentials
 
 ## Release Notes
 

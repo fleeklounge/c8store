@@ -1,122 +1,157 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'screens/welcome_screen.dart';
+import 'screens/project_selection_screen.dart';
+import 'screens/main_screen.dart';
+import 'providers/authentication_provider.dart';
+import 'providers/projects_provider.dart';
+import 'providers/firestore_provider.dart';
+import 'services/oauth_service.dart';
+import 'services/secure_storage_service.dart';
+import 'services/firebase_management_service.dart';
+import 'services/firestore_service.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load OAuth config (from file if exists, otherwise use default)
+  final oauthConfig = await _loadOAuthConfig();
+
+  runApp(C8StoreApp(oauthConfig: oauthConfig));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// Load OAuth configuration
+///
+/// Priority:
+/// 1. oauth_config.json (for development/override)
+/// 2. Default credentials (embedded in app for distribution)
+Future<OAuthConfig> _loadOAuthConfig() async {
+  // List of possible config file locations
+  final possiblePaths = [
+    'oauth_config.json',
+    '../oauth_config.json',
+    '../../oauth_config.json',
+    '/Users/asanobm/workspace/hannahsoft/c8store/oauth_config.json',
+  ];
 
-  // This widget is the root of your application.
+  for (final path in possiblePaths) {
+    try {
+      final configFile = File(path);
+      if (await configFile.exists()) {
+        final content = await configFile.readAsString();
+        final json = jsonDecode(content) as Map<String, dynamic>;
+
+        debugPrint('✅ Using OAuth config from: $path');
+        return OAuthConfig(
+          clientId: json['clientId'] as String,
+          clientSecret: json['clientSecret'] as String,
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Failed to load from $path: $e');
+    }
+  }
+
+  // OAuth config file not found
+  debugPrint('❌ OAuth config file not found!');
+  debugPrint('Please create oauth_config.json in the project root.');
+  debugPrint('See oauth_config.json.example for the template.');
+
+  throw Exception(
+    'OAuth configuration not found. '
+    'Please create oauth_config.json with your Google OAuth credentials. '
+    'See docs/oauth-setup-detailed.md for setup instructions.',
+  );
+}
+
+class C8StoreApp extends StatelessWidget {
+  final OAuthConfig oauthConfig;
+
+  const C8StoreApp({super.key, required this.oauthConfig});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    // Initialize services
+    final storage = SecureStorageServiceImpl();
+
+    final oauthService = OAuthService(
+      config: oauthConfig,
+      storage: storage,
     );
-  }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return MultiProvider(
+      providers: [
+        // Authentication Provider
+        ChangeNotifierProvider(
+          create: (_) => AuthenticationProvider(
+            oauthService: oauthService,
+            storage: storage,
+          ),
         ),
+
+        // Projects Provider
+        ChangeNotifierProvider(
+          create: (_) => ProjectsProvider(
+            managementService: FirebaseManagementService(
+              oauthService: oauthService,
+            ),
+            storage: storage,
+          ),
+        ),
+
+        // Firestore Provider - initialized later when project is selected
+        ChangeNotifierProxyProvider<ProjectsProvider, FirestoreProvider?>(
+          create: (_) => null,
+          update: (context, projects, previous) {
+            if (projects.activeProject != null) {
+              return FirestoreProvider(
+                firestoreService: FirestoreService(
+                  projectId: projects.activeProject!.projectId,
+                  oauthService: oauthService,
+                ),
+              );
+            }
+            return previous;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        title: 'c8store - Firestore Manager',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const AppNavigator(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+
+/// Handles navigation based on authentication state
+class AppNavigator extends StatelessWidget {
+  const AppNavigator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<AuthenticationProvider, ProjectsProvider>(
+      builder: (context, auth, projects, _) {
+        // Not authenticated -> Welcome screen
+        if (!auth.isAuthenticated) {
+          return const WelcomeScreen();
+        }
+
+        // Authenticated but no active project -> Project selection
+        if (projects.activeProject == null) {
+          return const ProjectSelectionScreen();
+        }
+
+        // Authenticated with active project -> Main screen
+        return const MainScreen();
+      },
+    );
+  }
+}
+
