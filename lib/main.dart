@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/project_selection_screen.dart';
@@ -22,48 +22,37 @@ void main() async {
   runApp(C8StoreApp(oauthConfig: oauthConfig));
 }
 
-/// Load OAuth configuration
+/// Load OAuth configuration from bundled asset
 ///
-/// Priority:
-/// 1. oauth_config.json (for development/override)
-/// 2. Default credentials (embedded in app for distribution)
+/// The oauth_config.json file should be placed in the project root
+/// and will be bundled with the app as an asset.
 Future<OAuthConfig> _loadOAuthConfig() async {
-  // List of possible config file locations
-  final possiblePaths = [
-    'oauth_config.json',
-    '../oauth_config.json',
-    '../../oauth_config.json',
-    '/Users/asanobm/workspace/hannahsoft/c8store/oauth_config.json',
-  ];
+  try {
+    // Load from bundled asset
+    final content = await rootBundle.loadString('oauth_config.json');
+    final json = jsonDecode(content) as Map<String, dynamic>;
 
-  for (final path in possiblePaths) {
-    try {
-      final configFile = File(path);
-      if (await configFile.exists()) {
-        final content = await configFile.readAsString();
-        final json = jsonDecode(content) as Map<String, dynamic>;
+    debugPrint('✅ Using OAuth config from bundled asset');
+    return OAuthConfig(
+      clientId: json['clientId'] as String,
+      clientSecret: json['clientSecret'] as String,
+    );
+  } catch (e) {
+    debugPrint('❌ Failed to load oauth_config.json: $e');
+    debugPrint('');
+    debugPrint('Please create oauth_config.json in the project root:');
+    debugPrint('1. Copy oauth_config.json.example to oauth_config.json');
+    debugPrint('2. Fill in your OAuth credentials from Google Cloud Console');
+    debugPrint('3. Run flutter run again');
+    debugPrint('');
+    debugPrint('See docs/oauth-setup-detailed.md for detailed setup instructions.');
 
-        debugPrint('✅ Using OAuth config from: $path');
-        return OAuthConfig(
-          clientId: json['clientId'] as String,
-          clientSecret: json['clientSecret'] as String,
-        );
-      }
-    } catch (e) {
-      debugPrint('❌ Failed to load from $path: $e');
-    }
+    throw Exception(
+      'OAuth configuration not found. '
+      'Please create oauth_config.json with your Google OAuth credentials. '
+      'See docs/oauth-setup-detailed.md for setup instructions.',
+    );
   }
-
-  // OAuth config file not found
-  debugPrint('❌ OAuth config file not found!');
-  debugPrint('Please create oauth_config.json in the project root.');
-  debugPrint('See oauth_config.json.example for the template.');
-
-  throw Exception(
-    'OAuth configuration not found. '
-    'Please create oauth_config.json with your Google OAuth credentials. '
-    'See docs/oauth-setup-detailed.md for setup instructions.',
-  );
 }
 
 class C8StoreApp extends StatelessWidget {
