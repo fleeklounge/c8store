@@ -133,11 +133,11 @@ class ConnectionState {
   /// Remove a project from the list
   ConnectionState removeProject(String projectId) {
     final updatedProjects = projects.where((p) => p.projectId != projectId).toList();
-    final newActiveProjectId = activeProjectId == projectId ? null : activeProjectId;
+    final shouldClearActive = activeProjectId == projectId;
 
     return copyWith(
       projects: updatedProjects,
-      activeProjectId: newActiveProjectId,
+      clearActiveProject: shouldClearActive,
     );
   }
 
